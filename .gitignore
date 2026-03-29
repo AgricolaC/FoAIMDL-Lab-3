@@ -175,7 +175,7 @@ cython_debug/
 
 # --- Dataset & Binary Files ---
 # Strictly avoid pushing raw data or zips 
-data/
+dataset/
 *.zip
 *.tar.gz
 
