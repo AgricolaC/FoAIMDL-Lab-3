@@ -21,7 +21,7 @@ def evaluate():
         return
 
     # 4. Get the Data (Val/Test loader only)
-    _, val_loader = get_loaders('./dataset/tiny-imagenet-200', batch_size=64)
+    _, _, test_loader = get_loaders('./dataset/tiny-imagenet-200', batch_size=64)
     
     criterion = nn.CrossEntropyLoss()
     
@@ -32,7 +32,7 @@ def evaluate():
     total = 0
 
     with torch.no_grad(): # Disable gradient tracking to save memory/time
-        for inputs, targets in val_loader:
+        for inputs, targets in test_loader:
             inputs, targets = inputs.to(device), targets.to(device)
             
             outputs = model(inputs)
@@ -43,7 +43,7 @@ def evaluate():
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
 
-    avg_loss = val_loss / len(val_loader)
+    avg_loss = val_loss / len(test_loader)
     accuracy = 100. * correct / total
     
     print("-" * 30)

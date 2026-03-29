@@ -22,7 +22,7 @@ def train():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = CustomNet(num_classes=200).to(device)
-    train_loader, val_loader = get_loaders('./dataset/tiny-imagenet-200', config.batch_size)    
+    train_loader, val_loader, _ = get_loaders('./dataset/tiny-imagenet-200', config.batch_size)    
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=config.learning_rate, momentum=0.9)
 
