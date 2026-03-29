@@ -5,6 +5,7 @@ import wandb
 from models.CustomNet import CustomNet
 from data.tiny_imagenet import get_loaders
 import os
+from tqdm import tqdm
 
 
 
