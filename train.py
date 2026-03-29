@@ -58,6 +58,7 @@ def validate(model, val_loader, criterion):
     model.eval()
     val_loss = 0
     correct, total = 0,0
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(tqdm(val_loader)):
