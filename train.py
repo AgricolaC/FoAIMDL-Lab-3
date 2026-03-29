@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import wandb
-from models.customnet import CustomNet
+from models.CustomNet import CustomNet
 from dataset.loaders import get_loaders
 import os
 

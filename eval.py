@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from models.customnet import CustomNet
+from models.CustomNet import CustomNet
 from dataset.loaders import get_loaders
 
 def evaluate():
