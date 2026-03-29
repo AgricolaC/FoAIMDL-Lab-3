@@ -17,8 +17,25 @@ def get_loaders(data_dir, batch_size=64):
     ])
 
     train_set = datasets.ImageFolder(os.path.join(data_dir, 'train'), transform=train_transform)
-    # Ensure you reorganized 'val' into 'val/images' per Lab 2 instructions
-    val_set = datasets.ImageFolder(os.path.join(data_dir, 'val/images'), transform=val_transform)
+    
+    # 3. Step 3: Reorganize Val Folder for ImageFolder compatibility
+    val_dir = os.path.join(data_dir, 'val')
+    img_dir = os.path.join(val_dir, 'images')
+    annotations_file = os.path.join(val_dir, 'val_annotations.txt')
+
+    if os.path.exists(annotations_file):
+        with open(annotations_file, 'r') as f:
+            for line in f.readlines():
+                parts = line.split('\t')
+                img, cls = parts[0], parts[1]
+                new_cls_dir = os.path.join(img_dir, cls)
+                os.makedirs(new_cls_dir, exist_ok=True)
+                
+                img_path = os.path.join(img_dir, img)
+                if os.path.exists(img_path):
+                    os.rename(img_path, os.path.join(new_cls_dir, img))
+
+    val_set = datasets.ImageFolder(img_dir, transform=val_transform)
 
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=2)
     val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False, num_workers=2)
