@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from models.CustomNet import CustomNet
-from dataset.loaders import get_loaders
+from data.tiny_imagenet import get_loaders
 
 def evaluate():
     # 1. Setup Device
@@ -21,7 +21,7 @@ def evaluate():
         return
 
     # 4. Get the Data (Val/Test loader only)
-    _, val_loader = get_loaders('./data/tiny-imagenet-200', batch_size=64)
+    _, val_loader = get_loaders('/dataset/tiny-imagenet-200', batch_size=64)
     
     criterion = nn.CrossEntropyLoss()
     
