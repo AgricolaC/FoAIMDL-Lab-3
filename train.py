@@ -32,13 +32,23 @@ def train():
     best_acc = 0
     for epoch in range(1, config.epochs + 1):
         model.train()
-        for inputs, targets in train_loader:
+        train_loss = 0.0
+        correct, total = 0, 0
+        for inputs, targets in tqdm(train_loader, desc=f"Epoch {epoch}/{config.epochs}"):
             inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
+
+            train_loss += loss.item()
+            _, predicted = outputs.max(1)
+            total += targets.size(0)
+            correct += predicted.eq(targets).sum().item()
+
+        train_loss /= len(train_loader)
+        train_acc = 100. * correct / total
 
         val_acc = validate(model, val_loader, criterion) 
         
