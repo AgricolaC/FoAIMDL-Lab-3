@@ -4,6 +4,9 @@ import torch.optim as optim
 import wandb
 from models.customnet import CustomNet
 from dataset.loaders import get_loaders
+import os
+
+
 
 def train():
     # Initialize WandB experiment 
@@ -13,6 +16,8 @@ def train():
         "batch_size": 64
     })
     config = wandb.config
+
+    os.makedirs('checkpoints', exist_ok=True) # Ensure the folder exists!
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = CustomNet(num_classes=200).to(device)
@@ -35,11 +40,40 @@ def train():
             loss.backward()
             optimizer.step()
 
-        # Log metrics to WandB [cite: 42, 48]
-        # (Insert your validation logic here to get val_acc)
-        # wandb.log({"epoch": epoch, "loss": loss.item(), "val_acc": val_acc})
+        val_acc = validate(model, val_loader, criterion) 
         
-        # Save best model to checkpoints/ 
-        # torch.save(model.state_dict(), 'checkpoints/best_model.pth')
+        wandb.log({
+            "epoch": epoch,
+            "train_loss": train_loss,
+            "train_acc": train_acc,
+            "val_acc": val_acc
+        })
+
+        if val_acc > best_acc:
+            best_acc = val_acc
+            torch.save(model.state_dict(), 'checkpoints/best_model.pth')
+            print(f"--> New best model saved with {best_acc:.2f}% accuracy!")
+
+def validate(model, val_loader, criterion):
+    model.eval()
+    val_loss = 0
+    correct, total = 0,0
+
+    with torch.no_grad():
+        for batch_idx, (inputs, targets) in enumerate(tqdm(val_loader)):
+            inputs, targets = inputs.to(device), targets.to(device)
+            # Forward pass ONLY
+            outputs = model(inputs)
+            # Calculate loss
+            loss = criterion(outputs, targets)
+
+            val_loss += loss.item()
+            _, predicted = outputs.max(1)
+            total += targets.size(0)
+            correct += predicted.eq(targets).sum().item()    
+    val_loss = val_loss / len(val_loader)
+    val_accuracy = 100. * correct / total
+    print(f'Validation Loss: {val_loss:.6f} Acc: {val_accuracy:.2f}%')
+    return val_accuracy
 
 train()
