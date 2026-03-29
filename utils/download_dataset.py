@@ -3,7 +3,7 @@ import requests
 import zipfile
 from io import BytesIO
 
-def download_tiny_imagenet(dest_dir='/dataset'):
+def download_tiny_imagenet(dest_dir='./dataset'):
     """
     Downloads and extracts Tiny ImageNet into the recommended dataset directory.
     """
