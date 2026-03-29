@@ -22,7 +22,7 @@ def train():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = CustomNet(num_classes=200).to(device)
-    train_loader, val_loader, _ = get_loaders('./dataset/tiny-imagenet-200', config.batch_size)    
+    train_loader, val_loader, test_loader = get_loaders('./dataset/tiny-imagenet-200', config.batch_size)    
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=config.learning_rate, momentum=0.9)
 
@@ -63,6 +63,12 @@ def train():
             best_acc = val_acc
             torch.save(model.state_dict(), 'checkpoints/best_model.pth')
             print(f"--> New best model saved with {best_acc:.2f}% accuracy!")
+    # Load best weights for final testing
+    model.load_state_dict(torch.load('./checkpoints/best_model.pth'))
+
+    final_test_acc = validate(model, test_loader, criterion)
+    wandb.log({'final_test_acc': final_test_acc})
+    print(f'Final Test Accuracy: {final_test_acc:.2f}%')
 
 def validate(model, val_loader, criterion):
     model.eval()
