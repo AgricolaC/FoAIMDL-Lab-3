@@ -172,3 +172,25 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# --- Dataset & Binary Files ---
+# Strictly avoid pushing raw data or zips 
+data/
+*.zip
+*.tar.gz
+
+# --- ML Artifacts ---
+# Local logs from Weights & Biases 
+# Local model checkpoints (save these manually or to cloud storage) 
+checkpoints/*.pth
+
+# --- Python & Environment ---
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+venv/
+env/
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints
